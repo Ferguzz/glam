@@ -11,7 +11,7 @@ import "github.com/drakmaniso/glam/math"
 //
 // Note: matrices are stored in column-major order, so when writing literals
 // remember to use the transpose.
-type Mat4 [4][4]float32
+type Mat4 [16]float32
 
 //------------------------------------------------------------------------------
 
@@ -26,10 +26,10 @@ func NewMat4(
 	d, h, l, p float32,
 ) *Mat4 {
 	return &Mat4{
-		{a, b, c, d},
-		{e, f, g, h},
-		{i, j, k, l},
-		{m, n, o, p},
+		a, b, c, d,
+		e, f, g, h,
+		i, j, k, l,
+		m, n, o, p,
 	}
 }
 
@@ -44,10 +44,10 @@ func MakeMat4(
 	d, h, l, p float32,
 ) Mat4 {
 	return Mat4{
-		{a, b, c, d},
-		{e, f, g, h},
-		{i, j, k, l},
-		{m, n, o, p},
+		a, b, c, d,
+		e, f, g, h,
+		i, j, k, l,
+		m, n, o, p,
 	}
 }
 
@@ -61,25 +61,25 @@ func (matrix *Mat4) SetTo(
 	c, g, k, o,
 	d, h, l, p float32,
 ) {
-	matrix[0][0] = a
-	matrix[0][1] = b
-	matrix[0][2] = c
-	matrix[0][3] = d
+	matrix[0] = a
+	matrix[1] = b
+	matrix[2] = c
+	matrix[3] = d
 
-	matrix[1][0] = e
-	matrix[1][1] = f
-	matrix[1][2] = g
-	matrix[1][3] = h
+	matrix[4] = e
+	matrix[5] = f
+	matrix[6] = g
+	matrix[7] = h
 
-	matrix[2][0] = i
-	matrix[2][1] = j
-	matrix[2][2] = k
-	matrix[2][3] = l
+	matrix[8] = i
+	matrix[9] = j
+	matrix[10] = k
+	matrix[11] = l
 
-	matrix[3][0] = m
-	matrix[3][1] = n
-	matrix[3][2] = o
-	matrix[3][3] = p
+	matrix[12] = m
+	matrix[13] = n
+	matrix[14] = o
+	matrix[15] = p
 }
 
 //------------------------------------------------------------------------------
@@ -106,15 +106,15 @@ func Identity() Mat4 {
 
 //------------------------------------------------------------------------------
 
-// `At` returns the element at '(row, column)`.
-func (m Mat4) At(row, column int) float32 {
-	return m[column][row]
-}
+// // `At` returns the element at '(row, column)`.
+// func (m Mat4) At(row, column int) float32 {
+// 	return m[column][row]
+// }
 
-// `Set` sets the element at `(row, column)` to `value`.
-func (m *Mat4) Set(row, column int, value float32) {
-	m[column][row] = value
-}
+// // `Set` sets the element at `(row, column)` to `value`.
+// func (m *Mat4) Set(row, column int, value float32) {
+// 	m[column][row] = value
+// }
 
 //------------------------------------------------------------------------------
 
@@ -125,10 +125,10 @@ func Perspective(fieldOfView, aspectRatio, near, far float32) Mat4 {
 	f := float32(1.0) / math.Tan(fieldOfView/float32(2.0))
 
 	return Mat4{
-		{f / aspectRatio, 0, 0, 0},
-		{0, f, 0, 0},
-		{0, 0, (far + near) / (near - far), -1},
-		{0, 0, (2 * far * near) / (near - far), 0},
+		f / aspectRatio, 0, 0, 0,
+		0, f, 0, 0,
+		0, 0, (far + near) / (near - far), -1,
+		0, 0, (2 * far * near) / (near - far), 0,
 	}
 }
 
@@ -138,25 +138,25 @@ func Perspective(fieldOfView, aspectRatio, near, far float32) Mat4 {
 func (m *Mat4) SetToPerspective(fieldOfView, aspectRatio, near, far float32) {
 	f := float32(1.0) / math.Tan(fieldOfView/float32(2.0))
 
-	m[0][0] = f / aspectRatio
-	m[0][1] = 0
-	m[0][2] = 0
-	m[0][3] = 0
+	m[0] = f / aspectRatio
+	m[1] = 0
+	m[2] = 0
+	m[3] = 0
 
-	m[1][0] = 0
-	m[1][1] = f
-	m[1][2] = 0
-	m[1][3] = 0
+	m[4] = 0
+	m[5] = f
+	m[6] = 0
+	m[7] = 0
 
-	m[2][0] = 0
-	m[2][1] = 0
-	m[2][2] = (far + near) / (near - far)
-	m[2][3] = -1
+	m[8] = 0
+	m[9] = 0
+	m[10] = (far + near) / (near - far)
+	m[11] = -1
 
-	m[3][0] = 0
-	m[3][1] = 0
-	m[3][2] = (2 * far * near) / (near - far)
-	m[3][3] = 0
+	m[12] = 0
+	m[13] = 0
+	m[14] = (2 * far * near) / (near - far)
+	m[15] = 0
 }
 
 //------------------------------------------------------------------------------
@@ -166,10 +166,10 @@ func (m *Mat4) SetToPerspective(fieldOfView, aspectRatio, near, far float32) {
 // See also `SetToPerspectiveFrustum`, `Perspective` and `SetToPerspective`.
 func PerspectiveFrustum(left, right, bottom, top, near, far float32) Mat4 {
 	return Mat4{
-		{(2 * near) / (right - left), 0, 0, 0},
-		{0, (2 * near) / (top - bottom), 0, 0},
-		{(right + left) / (right - left), (top + bottom) / (top - bottom), -(far + near) / (far - near), -1},
-		{0, 0, -(2 * far * near) / (far - near), 0},
+		(2 * near) / (right - left), 0, 0, 0,
+		0, (2 * near) / (top - bottom), 0, 0,
+		(right + left) / (right - left), (top + bottom) / (top - bottom), -(far + near) / (far - near), -1,
+		0, 0, -(2 * far * near) / (far - near), 0,
 	}
 }
 
@@ -177,25 +177,25 @@ func PerspectiveFrustum(left, right, bottom, top, near, far float32) Mat4 {
 //
 // See also `PerspectiveFrustum`, `Perspective` and `SetToPerspective`.
 func (m *Mat4) SetToPerspectiveFrustum(left, right, bottom, top, near, far float32) {
-	m[0][0] = (2 * near) / (right - left)
-	m[0][1] = 0
-	m[0][2] = 0
-	m[0][3] = 0
+	m[0] = (2 * near) / (right - left)
+	m[1] = 0
+	m[2] = 0
+	m[3] = 0
 
-	m[1][0] = 0
-	m[1][1] = (2 * near) / (top - bottom)
-	m[1][2] = 0
-	m[1][3] = 0
+	m[4] = 0
+	m[5] = (2 * near) / (top - bottom)
+	m[6] = 0
+	m[7] = 0
 
-	m[2][0] = (right + left) / (right - left)
-	m[2][1] = (top + bottom) / (top - bottom)
-	m[2][2] = -(far + near) / (far - near)
-	m[2][3] = -1
+	m[8] = (right + left) / (right - left)
+	m[9] = (top + bottom) / (top - bottom)
+	m[10] = -(far + near) / (far - near)
+	m[11] = -1
 
-	m[3][0] = 0
-	m[3][1] = 0
-	m[3][2] = -(2 * far * near) / (far - near)
-	m[3][3] = 0
+	m[12] = 0
+	m[13] = 0
+	m[14] = -(2 * far * near) / (far - near)
+	m[15] = 0
 }
 
 //------------------------------------------------------------------------------
@@ -208,10 +208,10 @@ func Orthographic(zoom, aspectRatio, near, far float32) Mat4 {
 	top := zoom / 2
 	right := top * aspectRatio
 	return Mat4{
-		{1 / right, 0, 0, 0},
-		{0, 1 / top, 0, 0},
-		{0, 0, -2 / (far - near), 0},
-		{0, 0, -(far + near) / (far - near), 1},
+		1 / right, 0, 0, 0,
+		0, 1 / top, 0, 0,
+		0, 0, -2 / (far - near), 0,
+		0, 0, -(far + near) / (far - near), 1,
 	}
 }
 
@@ -223,25 +223,25 @@ func (m *Mat4) SetToOrthographic(zoom, aspectRatio, near, far float32) {
 	top := zoom / 2
 	right := top * aspectRatio
 
-	m[0][0] = 1 / right
-	m[0][1] = 0
-	m[0][2] = 0
-	m[0][3] = 0
+	m[0] = 1 / right
+	m[1] = 0
+	m[2] = 0
+	m[3] = 0
 
-	m[1][0] = 0
-	m[1][1] = 1 / top
-	m[1][2] = 0
-	m[1][3] = 0
+	m[4] = 0
+	m[5] = 1 / top
+	m[6] = 0
+	m[7] = 0
 
-	m[2][0] = 0
-	m[2][1] = 0
-	m[2][2] = -2 / (far - near)
-	m[2][3] = 0
+	m[8] = 0
+	m[9] = 0
+	m[10] = -2 / (far - near)
+	m[11] = 0
 
-	m[3][0] = 0
-	m[3][1] = 0
-	m[3][2] = -(far + near) / (far - near)
-	m[3][3] = 1
+	m[12] = 0
+	m[13] = 0
+	m[14] = -(far + near) / (far - near)
+	m[15] = 1
 }
 
 //------------------------------------------------------------------------------
@@ -251,10 +251,10 @@ func (m *Mat4) SetToOrthographic(zoom, aspectRatio, near, far float32) {
 // See also `SetToOrthographicFrustum`, `Orthographic` and `SetToOrthographic`.
 func OrthographicFrustum(left, right, bottom, top, near, far float32) Mat4 {
 	return Mat4{
-		{2 / (right - left), 0, 0, 0},
-		{0, 2 / (top - bottom), 0, 0},
-		{0, 0, -2 / (far - near), 0},
-		{-(right + left) / (right - left), -(top + bottom) / (top - bottom), -(far + near) / (far - near), 1},
+		2 / (right - left), 0, 0, 0,
+		0, 2 / (top - bottom), 0, 0,
+		0, 0, -2 / (far - near), 0,
+		-(right + left) / (right - left), -(top + bottom) / (top - bottom), -(far + near) / (far - near), 1,
 	}
 }
 
@@ -262,25 +262,25 @@ func OrthographicFrustum(left, right, bottom, top, near, far float32) Mat4 {
 //
 // See also `OrthographicFrustum`, `Orthographic` and `SetToOrthographic`.
 func (m *Mat4) SetToOrthographicFrustum(left, right, bottom, top, near, far float32) {
-	m[0][0] = 2 / (right - left)
-	m[0][1] = 0
-	m[0][2] = 0
-	m[0][3] = 0
+	m[0] = 2 / (right - left)
+	m[1] = 0
+	m[2] = 0
+	m[3] = 0
 
-	m[1][0] = 0
-	m[1][1] = 2 / (top - bottom)
-	m[1][2] = 0
-	m[1][3] = 0
+	m[4] = 0
+	m[5] = 2 / (top - bottom)
+	m[6] = 0
+	m[7] = 0
 
-	m[2][0] = 0
-	m[2][1] = 0
-	m[2][2] = -2 / (far - near)
-	m[2][3] = 0
+	m[8] = 0
+	m[9] = 0
+	m[10] = -2 / (far - near)
+	m[11] = 0
 
-	m[3][0] = -(right + left) / (right - left)
-	m[3][1] = -(top + bottom) / (top - bottom)
-	m[3][2] = -(far + near) / (far - near)
-	m[3][3] = 1
+	m[12] = -(right + left) / (right - left)
+	m[13] = -(top + bottom) / (top - bottom)
+	m[14] = -(far + near) / (far - near)
+	m[15] = 1
 }
 
 //------------------------------------------------------------------------------
@@ -290,10 +290,10 @@ func (m *Mat4) SetToOrthographicFrustum(left, right, bottom, top, near, far floa
 // See also `SetToTranslation`.
 func Translation(t Vec3) Mat4 {
 	return Mat4{
-		{1, 0, 0, 0},
-		{0, 1, 0, 0},
-		{0, 0, 1, 0},
-		{t.X, t.Y, t.Z, 1},
+		1, 0, 0, 0,
+		0, 1, 0, 0,
+		0, 0, 1, 0,
+		t.X, t.Y, t.Z, 1,
 	}
 }
 
@@ -301,25 +301,25 @@ func Translation(t Vec3) Mat4 {
 //
 // See also `Translation`.
 func (m *Mat4) SetToTranslation(t Vec3) {
-	m[0][0] = 1
-	m[0][1] = 0
-	m[0][2] = 0
-	m[0][3] = 0
+	m[0] = 1
+	m[1] = 0
+	m[2] = 0
+	m[3] = 0
 
-	m[1][0] = 0
-	m[1][1] = 1
-	m[1][2] = 0
-	m[1][3] = 0
+	m[4] = 0
+	m[5] = 1
+	m[6] = 0
+	m[7] = 0
 
-	m[2][0] = 0
-	m[2][1] = 0
-	m[2][2] = 1
-	m[2][3] = 0
+	m[8] = 0
+	m[9] = 0
+	m[10] = 1
+	m[11] = 0
 
-	m[3][0] = t.X
-	m[3][1] = t.Y
-	m[3][2] = t.Z
-	m[3][3] = 1
+	m[12] = t.X
+	m[13] = t.Y
+	m[14] = t.Z
+	m[15] = 1
 }
 
 //------------------------------------------------------------------------------
@@ -332,10 +332,10 @@ func Rotation(angle float32, axis Vec3) Mat4 {
 	s := math.Sin(angle)
 
 	return Mat4{
-		{c + axis.X*axis.X*(1-c), -axis.Z*s + axis.X*axis.Y*(1-c), axis.Y*s + axis.X*axis.Z*(1-c), 0},
-		{axis.Z*s + axis.Y*axis.X*(1-c), c + axis.Y*axis.Y*(1-c), -axis.X*s + axis.Y*axis.Z*(1-c), 0},
-		{-axis.Y*s + axis.Z*axis.X*(1-c), axis.X*s + axis.Z*axis.Y*(1-c), c + axis.Z*axis.Z*(1-c), 0},
-		{0, 0, 0, 1},
+		c + axis.X*axis.X*(1-c), -axis.Z*s + axis.X*axis.Y*(1-c), axis.Y*s + axis.X*axis.Z*(1-c), 0,
+		axis.Z*s + axis.Y*axis.X*(1-c), c + axis.Y*axis.Y*(1-c), -axis.X*s + axis.Y*axis.Z*(1-c), 0,
+		-axis.Y*s + axis.Z*axis.X*(1-c), axis.X*s + axis.Z*axis.Y*(1-c), c + axis.Z*axis.Z*(1-c), 0,
+		0, 0, 0, 1,
 	}
 }
 
@@ -346,25 +346,25 @@ func (m *Mat4) Rotation(angle float32, axis Vec3) {
 	c := math.Cos(angle)
 	s := math.Sin(angle)
 
-	m[0][0] = c + axis.X*axis.X*(1-c)
-	m[0][1] = -axis.Z*s + axis.X*axis.Y*(1-c)
-	m[0][2] = axis.Y*s + axis.X*axis.Z*(1-c)
-	m[0][3] = 0
+	m[0] = c + axis.X*axis.X*(1-c)
+	m[1] = -axis.Z*s + axis.X*axis.Y*(1-c)
+	m[2] = axis.Y*s + axis.X*axis.Z*(1-c)
+	m[3] = 0
 
-	m[1][0] = axis.Z*s + axis.Y*axis.X*(1-c)
-	m[1][1] = c + axis.Y*axis.Y*(1-c)
-	m[1][2] = -axis.X*s + axis.Y*axis.Z*(1-c)
-	m[1][3] = 0
+	m[4] = axis.Z*s + axis.Y*axis.X*(1-c)
+	m[5] = c + axis.Y*axis.Y*(1-c)
+	m[6] = -axis.X*s + axis.Y*axis.Z*(1-c)
+	m[7] = 0
 
-	m[2][0] = -axis.Y*s + axis.Z*axis.X*(1-c)
-	m[2][1] = axis.X*s + axis.Z*axis.Y*(1-c)
-	m[2][2] = c + axis.Z*axis.Z*(1-c)
-	m[2][3] = 0
+	m[8] = -axis.Y*s + axis.Z*axis.X*(1-c)
+	m[9] = axis.X*s + axis.Z*axis.Y*(1-c)
+	m[10] = c + axis.Z*axis.Z*(1-c)
+	m[11] = 0
 
-	m[3][0] = 0
-	m[3][1] = 0
-	m[3][2] = 0
-	m[3][3] = 1
+	m[12] = 0
+	m[13] = 0
+	m[14] = 0
+	m[15] = 1
 }
 
 //------------------------------------------------------------------------------
@@ -374,30 +374,25 @@ func (m *Mat4) Rotation(angle float32, axis Vec3) {
 // See also `Multiply`, `TimesVec` and `MultiplyVec`.
 func (m *Mat4) Times(o *Mat4) Mat4 {
 	return Mat4{
-		{
-			m[0][0]*o[0][0] + m[0][1]*o[1][0] + m[0][2]*o[2][0] + m[0][3]*o[3][0],
-			m[0][0]*o[0][1] + m[0][1]*o[1][1] + m[0][2]*o[2][1] + m[0][3]*o[3][1],
-			m[0][0]*o[0][2] + m[0][1]*o[1][2] + m[0][2]*o[2][2] + m[0][3]*o[3][2],
-			m[0][0]*o[0][3] + m[0][1]*o[1][3] + m[0][2]*o[2][3] + m[0][3]*o[3][3],
-		},
-		{
-			m[1][0]*o[0][0] + m[1][1]*o[1][0] + m[1][2]*o[2][0] + m[1][3]*o[3][0],
-			m[1][0]*o[0][1] + m[1][1]*o[1][1] + m[1][2]*o[2][1] + m[1][3]*o[3][1],
-			m[1][0]*o[0][2] + m[1][1]*o[1][2] + m[1][2]*o[2][2] + m[1][3]*o[3][2],
-			m[1][0]*o[0][3] + m[1][1]*o[1][3] + m[1][2]*o[2][3] + m[1][3]*o[3][3],
-		},
-		{
-			m[2][0]*o[0][0] + m[2][1]*o[1][0] + m[2][2]*o[2][0] + m[2][3]*o[3][0],
-			m[2][0]*o[0][1] + m[2][1]*o[1][1] + m[2][2]*o[2][1] + m[2][3]*o[3][1],
-			m[2][0]*o[0][2] + m[2][1]*o[1][2] + m[2][2]*o[2][2] + m[2][3]*o[3][2],
-			m[2][0]*o[0][3] + m[2][1]*o[1][3] + m[2][2]*o[2][3] + m[2][3]*o[3][3],
-		},
-		{
-			m[3][0]*o[0][0] + m[3][1]*o[1][0] + m[3][2]*o[2][0] + m[3][3]*o[3][0],
-			m[3][0]*o[0][1] + m[3][1]*o[1][1] + m[3][2]*o[2][1] + m[3][3]*o[3][1],
-			m[3][0]*o[0][2] + m[3][1]*o[1][2] + m[3][2]*o[2][2] + m[3][3]*o[3][2],
-			m[3][0]*o[0][3] + m[3][1]*o[1][3] + m[3][2]*o[2][3] + m[3][3]*o[3][3],
-		},
+		m[0]*o[0] + m[1]*o[4] + m[2]*o[8] + m[3]*o[12],
+		m[0]*o[1] + m[1]*o[5] + m[2]*o[9] + m[3]*o[13],
+		m[0]*o[2] + m[1]*o[6] + m[2]*o[10] + m[3]*o[14],
+		m[0]*o[3] + m[1]*o[7] + m[2]*o[11] + m[3]*o[15],
+
+		m[4]*o[0] + m[5]*o[4] + m[6]*o[8] + m[7]*o[12],
+		m[4]*o[1] + m[5]*o[5] + m[6]*o[9] + m[7]*o[13],
+		m[4]*o[2] + m[5]*o[6] + m[6]*o[10] + m[7]*o[14],
+		m[4]*o[3] + m[5]*o[7] + m[6]*o[11] + m[7]*o[15],
+
+		m[8]*o[0] + m[9]*o[4] + m[10]*o[8] + m[11]*o[12],
+		m[8]*o[1] + m[9]*o[5] + m[10]*o[9] + m[11]*o[13],
+		m[8]*o[2] + m[9]*o[6] + m[10]*o[10] + m[11]*o[14],
+		m[8]*o[3] + m[9]*o[7] + m[10]*o[11] + m[11]*o[15],
+
+		m[12]*o[0] + m[13]*o[4] + m[14]*o[8] + m[15]*o[12],
+		m[12]*o[1] + m[13]*o[5] + m[14]*o[9] + m[15]*o[13],
+		m[12]*o[2] + m[13]*o[6] + m[14]*o[10] + m[15]*o[14],
+		m[12]*o[3] + m[13]*o[7] + m[14]*o[11] + m[15]*o[15],
 	}
 }
 
@@ -407,25 +402,25 @@ func (m *Mat4) Times(o *Mat4) Mat4 {
 //
 // See also `Multiply`, `TimesVec` and `MultiplyVec`.
 func (r *Mat4) Multiply(m, o *Mat4) {
-	r[0][0] = m[0][0]*o[0][0] + m[0][1]*o[1][0] + m[0][2]*o[2][0] + m[0][3]*o[3][0]
-	r[0][1] = m[0][0]*o[0][1] + m[0][1]*o[1][1] + m[0][2]*o[2][1] + m[0][3]*o[3][1]
-	r[0][2] = m[0][0]*o[0][2] + m[0][1]*o[1][2] + m[0][2]*o[2][2] + m[0][3]*o[3][2]
-	r[0][3] = m[0][0]*o[0][3] + m[0][1]*o[1][3] + m[0][2]*o[2][3] + m[0][3]*o[3][3]
+	r[0] = m[0]*o[0] + m[1]*o[4] + m[2]*o[8] + m[3]*o[12]
+	r[1] = m[0]*o[1] + m[1]*o[5] + m[2]*o[9] + m[3]*o[13]
+	r[2] = m[0]*o[2] + m[1]*o[6] + m[2]*o[10] + m[3]*o[14]
+	r[3] = m[0]*o[3] + m[1]*o[7] + m[2]*o[11] + m[3]*o[15]
 
-	r[1][0] = m[1][0]*o[0][0] + m[1][1]*o[1][0] + m[1][2]*o[2][0] + m[1][3]*o[3][0]
-	r[1][1] = m[1][0]*o[0][1] + m[1][1]*o[1][1] + m[1][2]*o[2][1] + m[1][3]*o[3][1]
-	r[1][2] = m[1][0]*o[0][2] + m[1][1]*o[1][2] + m[1][2]*o[2][2] + m[1][3]*o[3][2]
-	r[1][3] = m[1][0]*o[0][3] + m[1][1]*o[1][3] + m[1][2]*o[2][3] + m[1][3]*o[3][3]
+	r[4] = m[4]*o[0] + m[5]*o[4] + m[6]*o[8] + m[7]*o[12]
+	r[5] = m[4]*o[1] + m[5]*o[5] + m[6]*o[9] + m[7]*o[13]
+	r[6] = m[4]*o[2] + m[5]*o[6] + m[6]*o[10] + m[7]*o[14]
+	r[7] = m[4]*o[3] + m[5]*o[7] + m[6]*o[11] + m[7]*o[15]
 
-	r[2][0] = m[2][0]*o[0][0] + m[2][1]*o[1][0] + m[2][2]*o[2][0] + m[2][3]*o[3][0]
-	r[2][1] = m[2][0]*o[0][1] + m[2][1]*o[1][1] + m[2][2]*o[2][1] + m[2][3]*o[3][1]
-	r[2][2] = m[2][0]*o[0][2] + m[2][1]*o[1][2] + m[2][2]*o[2][2] + m[2][3]*o[3][2]
-	r[2][3] = m[2][0]*o[0][3] + m[2][1]*o[1][3] + m[2][2]*o[2][3] + m[2][3]*o[3][3]
+	r[8] = m[8]*o[0] + m[9]*o[4] + m[10]*o[8] + m[11]*o[12]
+	r[9] = m[8]*o[1] + m[9]*o[5] + m[10]*o[9] + m[11]*o[13]
+	r[10] = m[8]*o[2] + m[9]*o[6] + m[10]*o[10] + m[11]*o[14]
+	r[11] = m[8]*o[3] + m[9]*o[7] + m[10]*o[11] + m[11]*o[15]
 
-	r[3][0] = m[3][0]*o[0][0] + m[3][1]*o[1][0] + m[3][2]*o[2][0] + m[3][3]*o[3][0]
-	r[3][1] = m[3][0]*o[0][1] + m[3][1]*o[1][1] + m[3][2]*o[2][1] + m[3][3]*o[3][1]
-	r[3][2] = m[3][0]*o[0][2] + m[3][1]*o[1][2] + m[3][2]*o[2][2] + m[3][3]*o[3][2]
-	r[3][3] = m[3][0]*o[0][3] + m[3][1]*o[1][3] + m[3][2]*o[2][3] + m[3][3]*o[3][3]
+	r[12] = m[12]*o[0] + m[13]*o[4] + m[14]*o[8] + m[15]*o[12]
+	r[13] = m[12]*o[1] + m[13]*o[5] + m[14]*o[9] + m[15]*o[13]
+	r[14] = m[12]*o[2] + m[13]*o[6] + m[14]*o[10] + m[15]*o[14]
+	r[15] = m[12]*o[3] + m[13]*o[7] + m[14]*o[11] + m[15]*o[15]
 }
 
 //------------------------------------------------------------------------------
