@@ -3,7 +3,7 @@
 
 package glam
 
-import "github.com/drakmaniso/glam/math"
+import "github.com/Ferguzz/glam/math"
 
 //------------------------------------------------------------------------------
 

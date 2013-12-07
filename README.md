@@ -18,7 +18,7 @@ so the focus is on speed over portability or accuracy.
 Package GLaM
 ------------
 
-    import "github.com/drakmaniso/glam"
+    import "github.com/Ferguzz/glam"
 
 This package provides vectors and matrices, and their associated operations.
  
@@ -31,7 +31,7 @@ This package provides vectors and matrices, and their associated operations.
 Package GLaM Math
 -----------------
 
-    import "github.com/drakmaniso/glam/math"
+    import "github.com/Ferguzz/glam/math"
 
 This package aims to provide *fast* float32 math functions, using assembly 
 when appropriate.
@@ -40,7 +40,7 @@ when appropriate.
 Package GLaM Noise
 ------------------
 
-    import "github.com/drakmaniso/glam/noise"
+    import "github.com/Ferguzz/glam/noise"
 
 The Perlin and Simplex noise functions are adapted from
 ["Simplex Noise Demystified"](http://www.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf)
