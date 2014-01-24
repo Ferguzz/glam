@@ -322,6 +322,15 @@ func (m *Mat4) SetToTranslation(t Vec3) {
 	m[15] = 1
 }
 
+func Scale(t Vec3) Mat4 {
+	return Mat4{
+		t.X, 0, 0, 0,
+		0, t.Y, 0, 0,
+		0, 0, t.Z, 0,
+		0, 0, 0, 1,
+	}
+}
+
 //------------------------------------------------------------------------------
 
 // `Rotation` returns a rotation matrix.
